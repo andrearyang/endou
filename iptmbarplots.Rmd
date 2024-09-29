@@ -1,0 +1,46 @@
+library(ggplot2)
+library(Hmisc)
+
+# df control
+df_control <- data.frame(
+  group = c('pos', 'pos', 'pos', 'pos', 'neg', 'neg', 'neg'),  
+  iPTM = c(0.76, 0.87, 0.94, 0.87, 0.34, 0.43, 0.19)
+)
+
+# barplot for controls
+ggplot(df_control, aes(x = group, y = iPTM)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "lightblue", color = "black", width = 0.6) +
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.7) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  theme_minimal() +
+  labs(title = "iPTMs for Positive and Negative Controls", x = "Group", y = "iPTM") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# t-test for controls
+pos_control <- df_control[df_control$group == 'pos', "iPTM"]
+neg_control <- df_control[df_control$group == 'neg', "iPTM"]
+t_test_result <- t.test(pos_control, neg_control)
+
+
+# df experimental
+df_experimental <- data.frame(
+  group = c('enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'enriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched', 'deenriched'),
+  iPTM = c(0.15, 0.09, 0.17, 0.36, 0.3, 0.17, 0.2, 0.6, 0.33, 0.14, 0.26, 0.27, 0.19, 0.2, 0.12, 0.39, 0.21, 0.38, 0.15, 0.17, 0.17, 0.52)
+)
+
+# barplot experimental
+ggplot(df_experimental, aes(x = group, y = iPTM)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "gray", color = "black", width = 0.6) +
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.7) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.2) +
+  theme_minimal() +
+  labs(title = "iPTMs for Enriched and DeEnriched Experimental Data", x = "Enriched/DeEnriched", y = "iPTM") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# t-test experimental
+enriched_experimental <- df_experimental[df_experimental$group == 'enriched', "iPTM"]
+deenriched_experimental <- df_experimental[df_experimental$group == 'deenriched', "iPTM"]
+t_test_result_experimental <- t.test(enriched_experimental, deenriched_experimental)
+
+print(t_test_result)
+print(t_test_result_experimental)
